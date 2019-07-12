@@ -7,10 +7,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,7 +107,7 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
 
                     Bitmap drawing = BitmapFactory.decodeByteArray(drawingBytes, 0, drawingBytes.length);
 
-                    if(drawing != null){
+                    if (drawing != null) {
                         imageView.setImageBitmap(drawing);
                     }
 
@@ -170,7 +172,7 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
         }
     }
 
-    private void fabFunction(final int position){
+    private void fabFunction(final int position) {
         RealmController realmController = RealmController.with();
         RealmResults<Idea> listOfIdeas = realmController.getAllBooks();
 
@@ -235,7 +237,7 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
 
     }
 
-    public void callNotifyDatasetChanged(){
+    public void callNotifyDatasetChanged() {
 
         Realm r = RealmController.getInstance().getRealm();
 

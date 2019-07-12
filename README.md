@@ -55,7 +55,7 @@ Nothing special here. Please note that the scanLibrary is added locally using *s
 
 ### Manifest
 
-Basically we have three Activities monitoring the jobs. 
+Basically we have two Activities monitoring the jobs. 
 * MainActivity
 * CanvasActivity
 

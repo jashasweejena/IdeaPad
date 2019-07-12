@@ -7,10 +7,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+
 import androidx.core.app.NavUtils;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -85,42 +89,13 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
 
         ButterKnife.bind(this);
 
-
         coordinatorLayout = findViewById(R.id.coordinatorlayout);
         setSupportActionBar(toolbar);
-
         realm = RealmController.with().getRealm();
-
         setUpRecycler();
-
-//        layoutInflater = this.getLayoutInflater();
-//        final View content = layoutInflater.inflate(R.layout.canvas, null, false);
-//
-//        mSignatureView = content.findViewById(R.id.drawingxyz);
-
-//        final View content2 = layoutInflater.inflate(R.layout.canvas2, null, false);
-//        CanvasView cv = new CanvasView(this);
-//        RelativeLayout parentView = content2.findViewById(R.id.parentView);
-//        parentView.addView(cv);
-
         listOfIdeas = RealmController.getInstance().getAllBooks();
-
         setRealmAdapter(listOfIdeas);
-
         handleIntent();
-
-//        firebaseStart();
-
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                fabFunction(null);
-            }
-        });
-
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,30 +103,13 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
             }
         });
 
-
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fabFunction(null);
+            }
+        });
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-//        //Pause the animation in case the app is closed and animation is still going on.
-//        recyclerViewAdapter.typeWriterView.removeAnimation();
-//
-//        //Also, dismiss the Dialog showing the description
-//        recyclerViewAdapter.descriptionDialog.dismiss();
-    }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-//        //Stop the animation in case the app is closed and animation is still going on.
-//        recyclerViewAdapter.typeWriterView.removeAnimation();
-//
-//        //Also, dismiss the Dialog showing the description
-//        recyclerViewAdapter.descriptionDialog.dismiss();
-    }
-
 
     //Helps to initialise RealmIdeaAdapter instance which in turn extends RealmModelAdapter
     // which extends RealmBase Adapter. Also, we are setting the RealmIdeaAdapter instance
@@ -167,15 +125,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
     }
 
     public void setUpRecycler() {
-
-
         //Assign ItemTouchHelper to RecyclerView.
         ItemTouchHelper.SimpleCallback itemTouchHelper = new RecyclerTouchItemHelper(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(recyclerView);
-
-//        ItemTouchHelper.Callback callback = new DeletionSwipeHelper(0, ItemTouchHelper.START, this, this);
-//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
-//        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         //Set up Vertical LinearLayoutManager
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -191,7 +143,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
     }
 
     private void runAnimation(RecyclerView recyclerView, int type) {
-
         Context context = recyclerView.getContext();
         LayoutAnimationController controller = null;
 
@@ -204,43 +155,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
 
             recyclerView.setLayoutAnimation(controller);
             recyclerView.scheduleLayoutAnimation();
-
-        }
-
-    }
-
-    public void setRealmData() {
-
-        ArrayList<Idea> ideaList = new ArrayList<>();
-
-        Idea dummyIdea1 = new Idea();
-        dummyIdea1.setId(new Random().nextInt());
-        dummyIdea1.setName("IdeaPad");
-        dummyIdea1.setDesc("xyz");
-        ideaList.add(dummyIdea1);
-
-        Idea dummyIdea2 = new Idea();
-        dummyIdea2.setId(new Random().nextInt());
-        dummyIdea2 = new Idea();
-        dummyIdea2.setName("NetControl");
-        dummyIdea1.setDesc("xyz");
-        ideaList.add(dummyIdea2);
-
-        Idea dummyIdea3 = new Idea();
-        dummyIdea3.setId(new Random().nextInt());
-        dummyIdea3 = new Idea();
-        dummyIdea3.setName("Dumb");
-        dummyIdea1.setDesc("xyz");
-        ideaList.add(dummyIdea3);
-
-        for (Idea item : ideaList) {
-
-            //Copy all the dummy ideas to realm
-
-            //Everything happens with a Realm transaction
-            realm.beginTransaction();
-            realm.copyToRealm(item);
-            realm.commitTransaction();
 
         }
 
@@ -287,105 +201,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
 
                     //Restore the deleted item.
                     recyclerViewAdapter.restoreItem(newIdea);
-
                 }
             });
             snackbar.setActionTextColor(Color.YELLOW);
             snackbar.show();
-
         }
-
-
-    }
-//    private void firebaseStart(){
-//
-//
-//        // Choose authentication providers
-//        List<AuthUI.IdpConfig> providers = Arrays.asList(
-//                new AuthUI.IdpConfig.GoogleBuilder().build());
-//
-//// Create and launch sign-in intent
-//        startActivityForResult(
-//                AuthUI.getInstance()
-//                        .createSignInIntentBuilder()
-//                        .setAvailableProviders(providers)
-//                        .build(),
-//                RC_SIGN_IN);
-//
-//    }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == RC_SIGN_IN) {
-//            IdpResponse response = IdpResponse.fromResultIntent(data);
-//            Log.d(TAG, "onActivityResult: " + response.getEmail());
-//
-//            if (resultCode == RESULT_OK) {
-//                // Successfully signed in
-//                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//                Log.d(TAG, "onActivityResult: " + user.getEmail());
-//                // ...
-//            } else {
-//                // Sign in failed. If response is null the user canceled the
-//                // sign-in flow using the back button. Otherwise check
-//                // response.getError().getErrorCode() and handle the error.
-//                // ...
-//                Log.d(TAG, "onActivityResult: " + "Login failed!!!!!!!!!fa");
-//
-//            }
-//        }
-//    }
-
-    private void drawView() {
-
-
-        mSignatureView.setPaintColor(Color.BLACK);
-        mSignatureView.setPaintWidthPx(getResources().getDimensionPixelSize(R.dimen.paint_width));
-        //mSignatureView.setPaintWidthPx(12);
-        mSignatureView.setPaintWidthDp(getResources().getDimension(R.dimen.paint_dpi));
-        //mSignatureView.setPaintWidthDp(6);
-        mSignatureView.setPaintAlpha(255);// from 0 to 255
-        mSignatureView.setResizeBehaviour(ResizeBehaviour.CROP);// Must be one of ResizeBehaviour
-        // values;
-        mSignatureView.setPathRedoUndoCountChangeListener(new PathRedoUndoCountChangeListener() {
-            @Override
-            public void onUndoCountChanged(int undoCount) {
-                // The undoCount is the number of the paths that can be undone
-            }
-
-            @Override
-            public void onRedoCountChanged(int redoCount) {
-                // The redoCount is the number of path removed that can be redrawn
-            }
-        });
-
-        // This listener will be notified every time a new path has been drawn
-        mSignatureView.setOnPathDrawnListener(new PathDrawnListener() {
-            @Override
-            public void onNewPathDrawn() {
-                // The user has finished drawing a path
-            }
-
-            @Override
-            public void onPathStart() {
-                // The user has started drawing a path
-            }
-        });
-
-        mSignatureView.getDrawScreenshot(new FreeDrawView.DrawCreatorListener() {
-            @Override
-            public void onDrawCreated(Bitmap draw) {
-                // The draw Bitmap is the drawn content of the View
-            }
-
-            @Override
-            public void onDrawCreationError() {
-                // Something went wrong creating the bitmap, should never
-                // happen unless the async task has been canceled
-            }
-        });
     }
 
     private void fabFunction(@Nullable final String desc) {
@@ -397,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
         final EditText editDesc = content.findViewById(R.id.editDesc);
         final ImageView image = content.findViewById(R.id.drawingImageView);
 
-        if(desc != null){
+        if (desc != null) {
             editDesc.setText(desc);
         }
 
@@ -422,9 +242,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
                             String desc = editDesc.getText().toString();
 
                             addIdeaToRealm(name, desc);
-                        }
-
-                        else{
+                        } else {
 
                             if (editName.getText() == null || editName.getText().toString().equals("") || editName.getText().toString().equals(" ")) {
                                 Toast.makeText(MainActivity.this, "Name field cannot be left blank!", Toast.LENGTH_SHORT).show();
@@ -498,17 +316,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
 
         r.copyToRealm(idea);
         r.commitTransaction();
-
     }
 
-    private void handleIntent(){
+    private void handleIntent() {
 
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
 
-
-        if(Intent.ACTION_SEND.equals(action) && type.equals("text/plain")) {
+        if (Intent.ACTION_SEND.equals(action) && type.equals("text/plain")) {
             String sentText = intent.getStringExtra(Intent.EXTRA_TEXT);
 
             if (sentText != null) {
@@ -517,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
         }
     }
 
-    private void addIdeaToRealm(String name, String desc){
+    private void addIdeaToRealm(String name, String desc) {
         realm.beginTransaction();
 
         Idea idea = new Idea();
@@ -528,7 +344,4 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
         realm.copyToRealm(idea);
         realm.commitTransaction();
     }
-
-
-
 }

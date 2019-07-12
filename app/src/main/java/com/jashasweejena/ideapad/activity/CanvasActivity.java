@@ -3,10 +3,13 @@ package com.jashasweejena.ideapad.activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -63,7 +66,6 @@ public class CanvasActivity extends AppCompatActivity {
         idea.setDrawing(byteArray);
         realm.copyToRealm(idea);
         realm.commitTransaction();
-//        new IdeaAdapter(this).restoreItem(idea);
         super.onBackPressed();
 
     }
