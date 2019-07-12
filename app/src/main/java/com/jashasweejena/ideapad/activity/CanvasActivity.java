@@ -1,5 +1,6 @@
 package com.jashasweejena.ideapad.activity;
 
+import android.app.ActionBar;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
@@ -36,6 +37,11 @@ public class CanvasActivity extends AppCompatActivity {
         setContentView(R.layout.activity_canvas);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        getSupportActionBar().hide();
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
 
         parentView = findViewById(R.id.parentView);
         CanvasView canvasView = new CanvasView(this);
