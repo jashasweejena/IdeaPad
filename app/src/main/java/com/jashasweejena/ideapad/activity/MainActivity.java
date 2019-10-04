@@ -146,8 +146,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
     }
 
     private void fabFunction(@Nullable final String desc) {
-        DialogUtils.showIdeaDialog(this, R.string.title_new_idea, desc, null,
-                this::addIdeaToRealm, true);
+        DialogUtils.showIdeaDialog(this, R.string.title_new_idea, realm, desc,
+                null, this::addIdeaToRealm, true);
     }
 
     private void handleIntent() {
@@ -165,8 +165,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
     }
 
     private void addIdeaToRealm(String name, String desc) {
-        realm.beginTransaction();
-
         Idea idea = new Idea();
         idea.setId(System.currentTimeMillis() + RealmController.getInstance().getAllBooks().size() + 1);
         idea.setName(name);

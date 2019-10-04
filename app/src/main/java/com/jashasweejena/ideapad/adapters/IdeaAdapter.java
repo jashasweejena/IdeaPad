@@ -123,7 +123,6 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
     }
 
     private void onEditComplete(Idea idea, String name, String desc) {
-        realm.beginTransaction();
         idea.setName(name);
         idea.setDesc(desc);
 
@@ -137,7 +136,7 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
         RealmResults<Idea> listOfIdeas = realmController.getAllBooks();
 
         Idea idea = listOfIdeas.get(position);
-        DialogUtils.showIdeaDialog(context, R.string.title_edit_idea,
+        DialogUtils.showIdeaDialog(context, R.string.title_edit_idea, realm,
                 idea.getName(), idea.getDesc(), (name, desc) -> onEditComplete(idea, name, desc),
                 false);
     }

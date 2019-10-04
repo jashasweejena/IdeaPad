@@ -36,11 +36,30 @@ import androidx.appcompat.app.AlertDialog;
 import com.jashasweejena.ideapad.R;
 import com.jashasweejena.ideapad.activity.CanvasActivity;
 
+import io.realm.Realm;
+
 public class DialogUtils {
-    public static void showIdeaDialog(Context context, @StringRes int title,
+
+    /**
+     * Shows a dialog to let the user add a new Idea or edit an existing idea. Starts a Realm
+     * transaction immediately, and commits it if the Idea add or edit operation fails. Remember
+     * that by the time {@code listener} is called, {@link Realm#beginTransaction()} has already
+     * been called. Call {@link Realm#commitTransaction()} in {@code listener}
+     *
+     * @param context        Context
+     * @param title          The title res to use as the dialog title
+     * @param realm          The Realm instance
+     * @param overriddenName The Idea name to pre fill in the dialog. Can be null.
+     * @param overriddenDesc The Idea description to pre fill in the dialog. Can be null.
+     * @param listener       The listener that is called when the Idea add or edit operation
+     *                       completes
+     * @param allowDraw      True to show a Draw button
+     */
+    public static void showIdeaDialog(Context context, @StringRes int title, Realm realm,
                                       @Nullable String overriddenName, @Nullable String overriddenDesc,
                                       OnIdeaDialogClosedListener listener, boolean allowDraw) {
 
+        realm.beginTransaction();
         final View inflater = LayoutInflater.from(context)
                 .inflate(R.layout.edit_idea, null, false);
         final EditText editName = inflater.findViewById(R.id.editName);
@@ -60,6 +79,7 @@ public class DialogUtils {
                         Toast.makeText(context,
                                 "Name field cannot be left blank!", Toast.LENGTH_SHORT)
                                 .show();
+                        realm.commitTransaction();
                         return;
                     }
 
@@ -68,6 +88,7 @@ public class DialogUtils {
                         Toast.makeText(context,
                                 "Desc field cannot be left blank!", Toast.LENGTH_SHORT)
                                 .show();
+                        realm.commitTransaction();
                         return;
                     }
                     listener.onIdeaSet(nameStr, desc1);
@@ -80,6 +101,8 @@ public class DialogUtils {
                 Intent intent = new Intent(context, CanvasActivity.class);
                 context.startActivity(intent);
             });
+
+        builder.setOnDismissListener(dialog -> realm.commitTransaction());
 
         AlertDialog dialog = builder.create();
         // get the center for the clipping circle
