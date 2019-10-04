@@ -5,11 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
-import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +12,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.jashasweejena.ideapad.R;
 import com.jashasweejena.ideapad.model.Idea;
@@ -39,20 +38,16 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
     @NonNull
     @Override
     public IdeaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         realm = RealmController.getInstance().getRealm();
 
         return new IdeaViewHolder(LayoutInflater.from(context)
                 .inflate(R.layout.single_item, parent, false));
-
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
-
         //Get an object of Idea at this very position
         final Idea idea = getItem(position);
-
         //cast the generic ViewHolder to a specific one
         final IdeaViewHolder ideaViewHolder = (IdeaViewHolder) holder;
 
@@ -74,32 +69,23 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
                 LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View showDesc = layoutInflater.inflate(R.layout.show_desc, null, false);
-
                 TypeWriterView description = showDesc.findViewById(R.id.description);
-
                 ImageView imageView = showDesc.findViewById(R.id.drawingImageView);
+                Idea idea = RealmController.getInstance().getAllBooks().get(position);
+                String descriptionString = idea.getDesc();
 
                 description.setDelay(100);
-
-                Idea idea = RealmController.getInstance().getAllBooks().get(position);
-
-                String descriptionString = idea.getDesc();
                 description.setText(descriptionString);
 
                 byte[] drawingBytes = idea.getDrawing();
 
                 if (drawingBytes != null) {
-
                     Bitmap drawing = BitmapFactory.decodeByteArray(drawingBytes, 0, drawingBytes.length);
-
                     if (drawing != null) {
                         imageView.setImageBitmap(drawing);
                     }
-
-
                 }
 
                 builder.setView(showDesc)
@@ -114,47 +100,34 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
 
     @Override
     public int getItemCount() {
-
         return RealmController.getInstance().getAllBooks().size();
     }
 
     public void removeItem(int position) {
-
         Realm r = RealmController.getInstance().getRealm();
 
         r.beginTransaction();
 
         RealmResults<Idea> results = realm.where(Idea.class).findAll();
         results.remove(position);
-
         r.commitTransaction();
-
         notifyItemRemoved(position);
     }
 
     public void restoreItem(Idea idea) {
-
         realm.beginTransaction();
-
         realm.copyToRealm(idea);
-
         realm.commitTransaction();
-
         notifyDataSetChanged();
-
     }
 
     public class IdeaViewHolder extends RecyclerView.ViewHolder {
-
         public CardView viewForeground;
         private TextView name;
 
-
         IdeaViewHolder(View itemView) {
             super(itemView);
-
             viewForeground = itemView.findViewById(R.id.card_idea);
-
             name = itemView.findViewById(R.id.name);
         }
     }
@@ -178,32 +151,29 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        String name;
+                        String desc;
                         RealmResults<Idea> listOfIdeas = realm.where(Idea.class).findAll();
-
                         Idea idea = listOfIdeas.get(position);
 
                         realm.beginTransaction();
 
-                        String name;
-                        String desc;
-
-
                         name = editName.getText().toString();
                         desc = editDesc.getText().toString();
 
-                        if (editName.getText() == null || editName.getText().toString().equals("") || editName.getText().toString().equals(" ")) {
-                            Toast.makeText(context.getApplicationContext(), "Name field cannot be left blank!", Toast.LENGTH_SHORT).show();
+                        if (editName.getText() == null || editName.getText().toString().equals("")
+                                || editName.getText().toString().equals(" ")) {
+
+                            Toast.makeText(context.getApplicationContext(),
+                                    "Name field cannot be left blank!", Toast.LENGTH_SHORT)
+                                    .show();
                             realm.commitTransaction();
                         } else {
-
                             idea.setName(name);
                             idea.setDesc(desc);
 
                             realm.copyToRealm(idea);
-
                             realm.commitTransaction();
-
                             notifyDataSetChanged();
                         }
 

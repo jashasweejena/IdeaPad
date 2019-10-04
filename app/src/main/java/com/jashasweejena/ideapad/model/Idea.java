@@ -7,13 +7,9 @@ public class Idea extends RealmObject {
 
     @PrimaryKey
     private long id; //Not automatically increment-able coz Realm
-
     private String name;
-
     private String desc;
-
     private byte[] drawing;
-
 
     public byte[] getDrawing() {
         return drawing;
@@ -39,8 +35,12 @@ public class Idea extends RealmObject {
         this.name = name;
     }
 
-    public String getDesc() { return desc; }
+    public String getDesc() {
+        return desc;
+    }
 
-    public void setDesc(String desc) { this.desc = desc; }
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
 
 }

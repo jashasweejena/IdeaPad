@@ -10,7 +10,6 @@ public abstract class RealmRecyclerViewAdapter<T extends RealmObject> extends Re
     private RealmBaseAdapter<T> realmBaseAdapter;
 
     T getItem(int position) {
-
         return realmBaseAdapter.getItem(position);
     }
 

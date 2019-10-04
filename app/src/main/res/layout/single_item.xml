@@ -41,11 +41,9 @@
         android:id="@+id/view_foreground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/relative_layout_foreground"
-        >
+        android:background="@drawable/relative_layout_foreground">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_idea"
+        <androidx.cardview.widget.CardView android:id="@+id/card_idea"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             cardview:cardBackgroundColor="@color/wuteva"

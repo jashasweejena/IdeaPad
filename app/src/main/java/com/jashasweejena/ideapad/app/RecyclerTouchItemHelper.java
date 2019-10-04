@@ -1,18 +1,17 @@
 package com.jashasweejena.ideapad.app;
 
 import android.graphics.Canvas;
+import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
-import android.view.View;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.jashasweejena.ideapad.adapters.IdeaAdapter;
 
-public class RecyclerTouchItemHelper extends ItemTouchHelper.SimpleCallback{
+public class RecyclerTouchItemHelper extends ItemTouchHelper.SimpleCallback {
 
     private RecyclerTouchListener listener;
-
 
     public RecyclerTouchItemHelper(int dragDirs, int swipeDirs, RecyclerTouchListener listener) {
         super(dragDirs, swipeDirs);
@@ -23,11 +22,10 @@ public class RecyclerTouchItemHelper extends ItemTouchHelper.SimpleCallback{
     public void clearView(@NonNull RecyclerView recyclerView,
                           @NonNull RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
-        final View foregroundView = ((IdeaAdapter.IdeaViewHolder)viewHolder).viewForeground;
+        final View foregroundView = ((IdeaAdapter.IdeaViewHolder) viewHolder).viewForeground;
         getDefaultUIUtil().clearView(foregroundView);
 
     }
-
 
     @Override
     public int convertToAbsoluteDirection(int flags, int layoutDirection) {
@@ -51,12 +49,9 @@ public class RecyclerTouchItemHelper extends ItemTouchHelper.SimpleCallback{
     public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
         super.onSelectedChanged(viewHolder, actionState);
 
-        if(viewHolder != null) {
-
-            final View foregroundView = ((IdeaAdapter.IdeaViewHolder)viewHolder).viewForeground;
-
+        if (viewHolder != null) {
+            final View foregroundView = ((IdeaAdapter.IdeaViewHolder) viewHolder).viewForeground;
             getDefaultUIUtil().onSelected(foregroundView);
-
         }
     }
 
@@ -66,7 +61,7 @@ public class RecyclerTouchItemHelper extends ItemTouchHelper.SimpleCallback{
                             int actionState, boolean isCurrentlyActive) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
 
-        final View foregroundView = ((IdeaAdapter.IdeaViewHolder)viewHolder).viewForeground;
+        final View foregroundView = ((IdeaAdapter.IdeaViewHolder) viewHolder).viewForeground;
         getDefaultUIUtil().onDraw(c, recyclerView, foregroundView, dX, dY, actionState, isCurrentlyActive);
 
     }
@@ -77,15 +72,13 @@ public class RecyclerTouchItemHelper extends ItemTouchHelper.SimpleCallback{
                                 int actionState, boolean isCurrentlyActive) {
         super.onChildDrawOver(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
 
-        final View foregroundView = ((IdeaAdapter.IdeaViewHolder)viewHolder).viewForeground;
+        final View foregroundView = ((IdeaAdapter.IdeaViewHolder) viewHolder).viewForeground;
         getDefaultUIUtil().onDrawOver(c, recyclerView, foregroundView, dX, dY, actionState, isCurrentlyActive);
     }
 
 
     public interface RecyclerTouchListener {
-
         void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position);
-
     }
 }
 

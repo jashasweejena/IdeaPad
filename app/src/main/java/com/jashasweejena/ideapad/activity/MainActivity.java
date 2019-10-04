@@ -6,28 +6,25 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.ItemTouchHelper;
-
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.jashasweejena.ideapad.R;
 import com.jashasweejena.ideapad.adapters.IdeaAdapter;
 import com.jashasweejena.ideapad.adapters.RealmModelAdapter;
@@ -54,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
     Toolbar toolbar;
     private IdeaAdapter recyclerViewAdapter;
     private Realm realm;
-    private LayoutInflater layoutInflater;
     private RealmResults<Idea> listOfIdeas;
 
 
@@ -80,10 +76,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
         });
     }
 
-    //Helps to initialise RealmIdeaAdapter instance which in turn extends RealmModelAdapter
-    // which extends RealmBase Adapter. Also, we are setting the RealmIdeaAdapter instance
-    // to recyclerViewAdapter
-    public void setRealmAdapter(RealmResults<Idea> listOfIdeas) {
+    private void setRealmAdapter(RealmResults<Idea> listOfIdeas) {
 
         RealmModelAdapter<Idea> realmAdapter =
                 new RealmModelAdapter<>(this, listOfIdeas, true);
@@ -96,44 +89,35 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
 
     public void setUpRecycler() {
         //Assign ItemTouchHelper to RecyclerView.
-        ItemTouchHelper.SimpleCallback itemTouchHelper = new RecyclerTouchItemHelper(0, ItemTouchHelper.LEFT, this);
-        new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(recyclerView);
+        ItemTouchHelper.SimpleCallback itemTouchHelper =
+                new RecyclerTouchItemHelper(0, ItemTouchHelper.LEFT, this);
+        recyclerViewAdapter = new IdeaAdapter(this);
 
         //Set up Vertical LinearLayoutManager
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         recyclerView.setLayoutManager(linearLayoutManager);
-
-        recyclerViewAdapter = new IdeaAdapter(this);
+        new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(recyclerView);
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        runAnimation(recyclerView, 0);
+        runAnimation(recyclerView);
         recyclerViewAdapter.notifyDataSetChanged();
     }
 
-    private void runAnimation(RecyclerView recyclerView, int type) {
+    private void runAnimation(RecyclerView recyclerView) {
         Context context = recyclerView.getContext();
-        LayoutAnimationController controller = null;
+        LayoutAnimationController controller =
+                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_fall_down);
 
-        switch (type) {
-            case 0: //Fall down animation
-                controller = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_fall_down);
-        }
-
-        if (controller != null) {
-
-            recyclerView.setLayoutAnimation(controller);
-            recyclerView.scheduleLayoutAnimation();
-
-        }
+        recyclerView.setLayoutAnimation(controller);
+        recyclerView.scheduleLayoutAnimation();
 
     }
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int deletedPosition) {
         if (viewHolder instanceof IdeaAdapter.IdeaViewHolder) {
-
             //Store the object to be हलाल so that you can resurrect it back, if you want.
             final Idea deletedIdea = RealmController.getInstance().getAllBooks().get(deletedPosition);
 
@@ -151,9 +135,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
             recyclerViewAdapter.removeItem(deletedPosition);
 
             if (RealmController.getInstance().getAllBooks().size() == 0) {
-
                 Prefs.with(getApplicationContext()).setPreLoad(false);
-
             }
 
             //As item is removed, show SnackBar
@@ -162,7 +144,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
             snackbar.setAction("UNDO", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     //Create new Idea object with fields of old object and use it instead.
                     Idea newIdea = new Idea();
                     newIdea.setId(deletedId);
@@ -179,9 +160,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
     }
 
     private void fabFunction(@Nullable final String desc) {
-
-        layoutInflater = MainActivity.this.getLayoutInflater();
-        final View content = layoutInflater.inflate(R.layout.edit_idea, null, false);
+        final View content = getLayoutInflater().inflate(R.layout.edit_idea, null, false);
 
         final EditText editName = content.findViewById(R.id.editName);
         final EditText editDesc = content.findViewById(R.id.editDesc);
@@ -196,14 +175,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
-
                         //Create a new Idea instance which will store information
                         //regarding the idea in respective fields and go into
                         //the realm database
 
                         if (desc == null) {
-
                             if (editName.getText() == null || editName.getText().toString().equals("") || editName.getText().toString().equals(" ")) {
                                 Toast.makeText(MainActivity.this, "Name field cannot be left blank!", Toast.LENGTH_SHORT).show();
                             }
@@ -212,7 +188,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
 
                             addIdeaToRealm(name, desc);
                         } else {
-
                             if (editName.getText() == null || editName.getText().toString().equals("") || editName.getText().toString().equals(" ")) {
                                 Toast.makeText(MainActivity.this, "Name field cannot be left blank!", Toast.LENGTH_SHORT).show();
                             }
@@ -225,9 +200,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                         dialog.dismiss();
-
                     }
                 })
                 .setNeutralButton(R.string.title_draw, new DialogInterface.OnClickListener() {
@@ -263,7 +236,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
     }
 
     private void handleIntent() {
-
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
