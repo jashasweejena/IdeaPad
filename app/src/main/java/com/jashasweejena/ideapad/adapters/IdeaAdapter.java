@@ -60,13 +60,13 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
         //If single clicked, show the description
         ideaViewHolder.viewForeground.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View showDesc = layoutInflater.inflate(R.layout.show_desc, null, false);
+            View showDesc = LayoutInflater.from(context)
+                    .inflate(R.layout.show_desc, null, false);
             TypeWriterView description = showDesc.findViewById(R.id.description);
             ImageView imageView = showDesc.findViewById(R.id.drawingImageView);
             String descriptionString = idea.getDesc();
-            description.setText(descriptionString);
 
+            description.setText(descriptionString);
             byte[] drawingBytes = idea.getDrawing();
 
             if (drawingBytes != null) {
