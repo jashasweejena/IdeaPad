@@ -24,29 +24,16 @@
     <color name="orange">#FF9800</color>
     <color name="deep_orange">#FF5505</color>
     <color name="brown">#7A5547</color>
-    <!--<color name="grey">#9D9D9D</color>-->
     <color name="blue_grey">#5E7C8B</color>
-
-
     <color name="background_light">#FFFAFAFA</color>
     <color name="background_deletion">#FFE5E5E5</color>
     <color name="background_deletion_swipe">#FFF44336</color>
     <color name="white">#FFFFFFFF</color>
     <color name="semi_black">#87000000</color>
-    <color name="grey">#FF828282</color>
-
+    <color name="grey">#828282</color>
+    <color name="text_header">#050505</color>
+    <color name="text_sub">#727272</color>
+    <color name="divider">#DBDBDB</color>
     <color name="wuteva">#0A79DF</color>
     <color name="masterbg">#f9f9f9</color>
-
-
 </resources>
-
-    <!--<?xml version="1.0" encoding="utf-8"?>-->
-    <!--<resources>-->
-    <!--<color name="colorPrimary">#3F51B5</color>-->
-    <!--<color name="colorPrimaryDark">#FFF</color>-->
-    <!--<color name="colorAccent">#ea3732</color>-->
-    <!--<color name="bg_row_background">#fa315b</color>-->
-    <!--<color name="item_name">#535353</color>-->
-    <!--<color name="description">#a9a9a9</color>-->
-    <!--</resources>-->
