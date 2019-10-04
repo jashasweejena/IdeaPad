@@ -67,22 +67,26 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
             ImageView imageView = showDesc.findViewById(R.id.drawingImageView);
             View divider = showDesc.findViewById(R.id.divider);
 
-            name.setText(idea.getName());
-            name.setSelected(true);
+            String nameStr = idea.getName();
+            if (nameStr == null || nameStr.isEmpty()) {
+                divider.setVisibility(View.GONE);
+                name.setVisibility(View.GONE);
+            } else {
+                name.setText(idea.getName());
+                divider.setVisibility(View.VISIBLE);
+                name.setVisibility(View.VISIBLE);
+                name.setSelected(true);
+            }
+
             description.setText(idea.getDesc());
             byte[] drawingBytes = idea.getDrawing();
 
             if (drawingBytes != null && drawingBytes.length > 1) {
-                divider.setVisibility(View.GONE);
-                name.setVisibility(View.GONE);
                 Bitmap drawing =
                         BitmapFactory.decodeByteArray(drawingBytes, 0, drawingBytes.length);
                 if (drawing != null) {
                     imageView.setImageBitmap(drawing);
                 }
-            } else {
-                divider.setVisibility(View.VISIBLE);
-                name.setVisibility(View.VISIBLE);
             }
 
             builder.setView(showDesc);
