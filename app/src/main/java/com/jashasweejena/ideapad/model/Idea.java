@@ -1,24 +1,15 @@
 package com.jashasweejena.ideapad.model;
 
-import android.graphics.Bitmap;
-import android.media.Image;
-
-import com.rm.freedrawview.FreeDrawSerializableState;
-
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class Idea extends RealmObject {
 
     @PrimaryKey
-    private long id; //Represents id column of the table. Not automatically increment-able coz Realm
-
-    private String name; //Represents name of the project
-
-    private String desc; //Represents description of the project.
-
-    private byte[] drawing; //Represents the bitmap of drawing
-
+    private long id; //Not automatically increment-able coz Realm
+    private String name;
+    private String desc;
+    private byte[] drawing;
 
     public byte[] getDrawing() {
         return drawing;
@@ -44,8 +35,12 @@ public class Idea extends RealmObject {
         this.name = name;
     }
 
-    public String getDesc() { return desc; }
+    public String getDesc() {
+        return desc;
+    }
 
-    public void setDesc(String desc) { this.desc = desc; }
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
 
 }

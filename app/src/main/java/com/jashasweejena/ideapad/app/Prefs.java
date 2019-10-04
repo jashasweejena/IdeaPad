@@ -11,24 +11,18 @@ public class Prefs {
     private final SharedPreferences sharedPreferences;
 
 
-    public Prefs(Context context) {
-
+    private Prefs(Context context) {
         sharedPreferences = context.getApplicationContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-
     }
 
     public static Prefs with(Context context) {
-
-        if(instance == null) {
+        if (instance == null) {
             instance = new Prefs(context);
         }
-
         return instance;
-
     }
 
-    public void setPreLoad(Boolean totalTime) {
-
+    public void setPreLoad(boolean totalTime) {
         sharedPreferences
                 .edit()
                 .putBoolean(PRE_LOAD, totalTime)
@@ -36,9 +30,7 @@ public class Prefs {
     }
 
     public Boolean getPreLoad() {
-
         return sharedPreferences
                 .getBoolean(PRE_LOAD, false);
-
     }
 }

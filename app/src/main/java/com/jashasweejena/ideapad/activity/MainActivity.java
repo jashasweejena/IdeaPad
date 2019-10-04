@@ -2,60 +2,35 @@ package com.jashasweejena.ideapad.activity;
 
 import android.animation.Animator;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.core.app.NavUtils;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.ItemTouchHelper;
-
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
-//import com.firebase.ui.auth.AuthUI;
-//import com.firebase.ui.auth.IdpResponse;
-//import com.google.firebase.auth.FirebaseAuth;
-//import com.google.firebase.auth.FirebaseUser;
-import com.ajithvgiri.canvaslibrary.CanvasView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.jashasweejena.ideapad.R;
 import com.jashasweejena.ideapad.adapters.IdeaAdapter;
-import com.jashasweejena.ideapad.adapters.RealmIdeaAdapter;
+import com.jashasweejena.ideapad.adapters.RealmModelAdapter;
 import com.jashasweejena.ideapad.app.Prefs;
 import com.jashasweejena.ideapad.app.RecyclerTouchItemHelper;
 import com.jashasweejena.ideapad.model.Idea;
 import com.jashasweejena.ideapad.realm.RealmController;
-import com.mrgames13.jimdo.splashscreen.App.SplashScreenBuilder;
-import com.rm.freedrawview.FreeDrawView;
-import com.rm.freedrawview.PathDrawnListener;
-import com.rm.freedrawview.PathRedoUndoCountChangeListener;
-import com.rm.freedrawview.ResizeBehaviour;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -75,11 +50,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
     Toolbar toolbar;
     private IdeaAdapter recyclerViewAdapter;
     private Realm realm;
-    private LayoutInflater layoutInflater;
     private RealmResults<Idea> listOfIdeas;
-    FreeDrawView mSignatureView;
-    private static int RC_SIGN_IN = 123;
-    byte[] bmp;
 
 
     @Override
@@ -91,32 +62,18 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
 
         coordinatorLayout = findViewById(R.id.coordinatorlayout);
         setSupportActionBar(toolbar);
-        realm = RealmController.with().getRealm();
+        realm = RealmController.getInstance().getRealm();
         setUpRecycler();
         listOfIdeas = RealmController.getInstance().getAllBooks();
         setRealmAdapter(listOfIdeas);
         handleIntent();
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fabFunction(null);
-            }
-        });
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fabFunction(null);
-            }
-        });
+        fab.setOnClickListener(v -> fabFunction(null));
     }
 
-    //Helps to initialise RealmIdeaAdapter instance which in turn extends RealmModelAdapter
-    // which extends RealmBase Adapter. Also, we are setting the RealmIdeaAdapter instance
-    // to recyclerViewAdapter
-    public void setRealmAdapter(RealmResults<Idea> listOfIdeas) {
+    private void setRealmAdapter(RealmResults<Idea> listOfIdeas) {
 
-        RealmIdeaAdapter realmAdapter = new RealmIdeaAdapter(this, listOfIdeas, true);
+        RealmModelAdapter<Idea> realmAdapter =
+                new RealmModelAdapter<>(this, listOfIdeas, true);
         //Join the RecyclerView Adapter and the realmAdapter
         recyclerViewAdapter.setRealmBaseAdapter(realmAdapter);
 
@@ -126,44 +83,35 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
 
     public void setUpRecycler() {
         //Assign ItemTouchHelper to RecyclerView.
-        ItemTouchHelper.SimpleCallback itemTouchHelper = new RecyclerTouchItemHelper(0, ItemTouchHelper.LEFT, this);
-        new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(recyclerView);
+        ItemTouchHelper.SimpleCallback itemTouchHelper =
+                new RecyclerTouchItemHelper(0, ItemTouchHelper.LEFT, this);
+        recyclerViewAdapter = new IdeaAdapter(this);
 
         //Set up Vertical LinearLayoutManager
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         recyclerView.setLayoutManager(linearLayoutManager);
-
-        recyclerViewAdapter = new IdeaAdapter(this);
+        new ItemTouchHelper(itemTouchHelper).attachToRecyclerView(recyclerView);
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        runAnimation(recyclerView, 0);
+        runAnimation(recyclerView);
         recyclerViewAdapter.notifyDataSetChanged();
     }
 
-    private void runAnimation(RecyclerView recyclerView, int type) {
+    private void runAnimation(RecyclerView recyclerView) {
         Context context = recyclerView.getContext();
-        LayoutAnimationController controller = null;
+        LayoutAnimationController controller =
+                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_fall_down);
 
-        switch (type) {
-            case 0: //Fall down animation
-                controller = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_fall_down);
-        }
-
-        if (controller != null) {
-
-            recyclerView.setLayoutAnimation(controller);
-            recyclerView.scheduleLayoutAnimation();
-
-        }
+        recyclerView.setLayoutAnimation(controller);
+        recyclerView.scheduleLayoutAnimation();
 
     }
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int deletedPosition) {
         if (viewHolder instanceof IdeaAdapter.IdeaViewHolder) {
-
             //Store the object to be हलाल so that you can resurrect it back, if you want.
             final Idea deletedIdea = RealmController.getInstance().getAllBooks().get(deletedPosition);
 
@@ -173,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
             //to new object and pass the new object to restoreItem.
             final String deletedName = deletedIdea.getName();
             final String deletedDesc = deletedIdea.getDesc();
-            final Long deletedId = deletedIdea.getId();
+            final long deletedId = deletedIdea.getId();
 
             Log.d(TAG, "onSwiped: " + "Adapter position before deletion " + deletedPosition);
             Log.d(TAG, "onSwiped: " + "Name of Item before deletion " + deletedName);
@@ -181,27 +129,21 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
             recyclerViewAdapter.removeItem(deletedPosition);
 
             if (RealmController.getInstance().getAllBooks().size() == 0) {
-
                 Prefs.with(getApplicationContext()).setPreLoad(false);
-
             }
 
             //As item is removed, show SnackBar
 
             Snackbar snackbar = Snackbar.make(coordinatorLayout, deletedName + " Removed from cart", Snackbar.LENGTH_SHORT);
-            snackbar.setAction("UNDO", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            snackbar.setAction("UNDO", v -> {
+                //Create new Idea object with fields of old object and use it instead.
+                Idea newIdea = new Idea();
+                newIdea.setId(deletedId);
+                newIdea.setName(deletedName);
+                newIdea.setDesc(deletedDesc);
 
-                    //Create new Idea object with fields of old object and use it instead.
-                    Idea newIdea = new Idea();
-                    newIdea.setId(deletedId);
-                    newIdea.setName(deletedName);
-                    newIdea.setDesc(deletedDesc);
-
-                    //Restore the deleted item.
-                    recyclerViewAdapter.restoreItem(newIdea);
-                }
+                //Restore the deleted item.
+                recyclerViewAdapter.restoreItem(newIdea);
             });
             snackbar.setActionTextColor(Color.YELLOW);
             snackbar.show();
@@ -209,13 +151,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
     }
 
     private void fabFunction(@Nullable final String desc) {
-
-        layoutInflater = MainActivity.this.getLayoutInflater();
-        final View content = layoutInflater.inflate(R.layout.edit_idea, null, false);
+        final View content = getLayoutInflater().inflate(R.layout.edit_idea, null, false);
 
         final EditText editName = content.findViewById(R.id.editName);
         final EditText editDesc = content.findViewById(R.id.editDesc);
-        final ImageView image = content.findViewById(R.id.drawingImageView);
 
         if (desc != null) {
             editDesc.setText(desc);
@@ -224,17 +163,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Mann mei ladoo phoota?")
                 .setView(content)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-
-                        //Create a new Idea instance which will store information
-                        //regarding the idea in respective fields and go into
-                        //the realm database
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    // Create a new Idea instance which will store information regarding the idea
+                    // in respective fields and go into the realm database
 
                         if (desc == null) {
-
                             if (editName.getText() == null || editName.getText().toString().equals("") || editName.getText().toString().equals(" ")) {
                                 Toast.makeText(MainActivity.this, "Name field cannot be left blank!", Toast.LENGTH_SHORT).show();
                             }
@@ -243,7 +176,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
 
                             addIdeaToRealm(name, desc);
                         } else {
-
                             if (editName.getText() == null || editName.getText().toString().equals("") || editName.getText().toString().equals(" ")) {
                                 Toast.makeText(MainActivity.this, "Name field cannot be left blank!", Toast.LENGTH_SHORT).show();
                             }
@@ -253,22 +185,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
                         }
                     }
                 })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        dialog.dismiss();
-
-                    }
-                })
-                .setNeutralButton(R.string.title_draw, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(MainActivity.this, CanvasActivity.class);
-                        startActivity(intent);
-                    }
-                })
-        ;
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss())
+                .setNeutralButton(R.string.title_draw, (dialog, which) -> {
+                    Intent intent = new Intent(MainActivity.this, CanvasActivity.class);
+                    startActivity(intent);
+                });
 
 
         AlertDialog dialog = builder.create();
@@ -276,55 +197,28 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
 
         final View view = dialog.getWindow().getDecorView();
 
-        view.post(new Runnable() {
-            @Override
-            public void run() {
-                final int centerX = view.getWidth() / 2;
-                final int centerY = view.getHeight() / 2;
-                // TODO Get startRadius from FAB
-                // TODO Also translate animate FAB to center of screen?
-                float startRadius = 20;
-                float endRadius = view.getHeight();
-                Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
-                animator.setDuration(500);
-                animator.start();
-            }
+        view.post(() -> {
+            final int centerX = view.getWidth() / 2;
+            final int centerY = view.getHeight() / 2;
+            // TODO Get startRadius from FAB
+            // TODO Also translate animate FAB to center of screen?
+            float startRadius = 20;
+            float endRadius = view.getHeight();
+            Animator animator = ViewAnimationUtils
+                    .createCircularReveal(view, centerX, centerY, startRadius, endRadius);
+            animator.setDuration(500);
+            animator.start();
         });
 
         dialog.show();
     }
 
-    public void setByteArray(byte[] bmp) {
-        if (bmp != null) {
-            Log.d(TAG, "setByteArray: " + "not null bmp");
-        }
-        this.bmp = bmp;
-    }
-
-    public void callNotifyDatasetChanged() {
-        recyclerViewAdapter.callNotifyDatasetChanged();
-    }
-
-    public void handleDrawing() {
-
-        Realm r = RealmController.getInstance().getRealm();
-
-        r.beginTransaction();
-        Idea idea = new Idea();
-        idea.setId(System.currentTimeMillis() + RealmController.getInstance().getAllBooks().size() + 1);
-        idea.setName(" ");
-
-        r.copyToRealm(idea);
-        r.commitTransaction();
-    }
-
     private void handleIntent() {
-
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
 
-        if (Intent.ACTION_SEND.equals(action) && type.equals("text/plain")) {
+        if (Intent.ACTION_SEND.equals(action) && "text/plain".equals(type)) {
             String sentText = intent.getStringExtra(Intent.EXTRA_TEXT);
 
             if (sentText != null) {

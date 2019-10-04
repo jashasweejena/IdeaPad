@@ -1,30 +1,19 @@
 package com.jashasweejena.ideapad.activity;
 
-import android.app.ActionBar;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.ajithvgiri.canvaslibrary.CanvasView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jashasweejena.ideapad.R;
-import com.jashasweejena.ideapad.adapters.IdeaAdapter;
 import com.jashasweejena.ideapad.model.Idea;
 import com.jashasweejena.ideapad.realm.RealmController;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 import io.realm.Realm;
 
@@ -35,10 +24,6 @@ public class CanvasActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_canvas);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().hide();
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
@@ -50,20 +35,12 @@ public class CanvasActivity extends AppCompatActivity {
         parentView.setDrawingCacheEnabled(true);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveCanvas();
-            }
-        });
+        fab.setOnClickListener(v -> saveCanvas());
     }
 
     private void saveCanvas() {
-
         Bitmap bitmap = parentView.getDrawingCache();
-
         byte[] byteArray = convertBitmapToByteArray(bitmap);
-
         Realm realm = RealmController.getInstance().getRealm();
 
         realm.beginTransaction();
@@ -79,7 +56,6 @@ public class CanvasActivity extends AppCompatActivity {
     private byte[] convertBitmapToByteArray(Bitmap bmp) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        return byteArray;
+        return stream.toByteArray();
     }
 }
