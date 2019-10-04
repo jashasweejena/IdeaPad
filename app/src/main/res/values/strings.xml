@@ -29,4 +29,5 @@
     <string name="title_activity_about">AboutActivity</string>
     <string name="title_new_idea">New Idea</string>
     <string name="title_edit_idea">Edit Idea</string>
+    <string name="idea_image">Image in Idea</string>
 </resources>

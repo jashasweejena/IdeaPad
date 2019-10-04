@@ -15,7 +15,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:hint="Name of the project"
-            android:inputType="text" />
+            android:inputType="textMultiLine"
+            android:maxLength="100" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -29,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:hint="What the project is all about"
-            android:inputType="text" />
+            android:inputType="textMultiLine" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

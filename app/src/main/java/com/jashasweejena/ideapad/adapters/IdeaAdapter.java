@@ -19,7 +19,6 @@ import com.jashasweejena.ideapad.model.Idea;
 import com.jashasweejena.ideapad.realm.RealmController;
 import com.jashasweejena.ideapad.utils.DialogUtils;
 
-import in.codeshuffle.typewriterview.TypeWriterView;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -50,6 +49,7 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
         final IdeaViewHolder ideaViewHolder = (IdeaViewHolder) holder;
 
         ideaViewHolder.name.setText(idea.getName());
+        ideaViewHolder.name.setSelected(true);
 
         //If long pressed, launch the edit dialog
         ideaViewHolder.viewForeground.setOnLongClickListener(v -> {
@@ -62,23 +62,34 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             View showDesc = LayoutInflater.from(context)
                     .inflate(R.layout.show_desc, null, false);
-            TypeWriterView description = showDesc.findViewById(R.id.description);
+            TextView name = showDesc.findViewById(R.id.name);
+            TextView description = showDesc.findViewById(R.id.description);
             ImageView imageView = showDesc.findViewById(R.id.drawingImageView);
-            String descriptionString = idea.getDesc();
+            View divider = showDesc.findViewById(R.id.divider);
 
-            description.setText(descriptionString);
+            String nameStr = idea.getName();
+            if (nameStr == null || nameStr.isEmpty()) {
+                divider.setVisibility(View.GONE);
+                name.setVisibility(View.GONE);
+            } else {
+                name.setText(idea.getName());
+                divider.setVisibility(View.VISIBLE);
+                name.setVisibility(View.VISIBLE);
+                name.setSelected(true);
+            }
+
+            description.setText(idea.getDesc());
             byte[] drawingBytes = idea.getDrawing();
 
-            if (drawingBytes != null) {
-                Bitmap drawing = BitmapFactory.decodeByteArray(drawingBytes, 0, drawingBytes.length);
+            if (drawingBytes != null && drawingBytes.length > 1) {
+                Bitmap drawing =
+                        BitmapFactory.decodeByteArray(drawingBytes, 0, drawingBytes.length);
                 if (drawing != null) {
                     imageView.setImageBitmap(drawing);
                 }
             }
 
-            builder.setView(showDesc)
-                    .setTitle("Description");
-
+            builder.setView(showDesc);
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         });

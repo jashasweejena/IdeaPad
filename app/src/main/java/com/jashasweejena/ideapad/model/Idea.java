@@ -9,7 +9,7 @@ public class Idea extends RealmObject {
     private long id; //Not automatically increment-able coz Realm
     private String name;
     private String desc;
-    private byte[] drawing;
+    private byte[] drawing = new byte[1];
 
     public byte[] getDrawing() {
         return drawing;
