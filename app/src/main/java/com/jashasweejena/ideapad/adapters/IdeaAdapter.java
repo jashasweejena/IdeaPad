@@ -49,6 +49,7 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
         final IdeaViewHolder ideaViewHolder = (IdeaViewHolder) holder;
 
         ideaViewHolder.name.setText(idea.getName());
+        ideaViewHolder.name.setSelected(true);
 
         //If long pressed, launch the edit dialog
         ideaViewHolder.viewForeground.setOnLongClickListener(v -> {
@@ -67,6 +68,7 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
             View divider = showDesc.findViewById(R.id.divider);
 
             name.setText(idea.getName());
+            name.setSelected(true);
             description.setText(idea.getDesc());
             byte[] drawingBytes = idea.getDrawing();
 

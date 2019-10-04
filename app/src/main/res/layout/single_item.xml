@@ -26,15 +26,6 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/padd_10"
             android:src="@drawable/baseline_delete_white_18" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/padd_10"
-            android:layout_toLeftOf="@+id/delete_icon"
-            android:textColor="#fff"
-            android:textSize="13dp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -85,7 +76,14 @@
                         android:paddingTop="@dimen/margin_large"
                         android:textColor="#e3f2fd"
                         android:textSize="@dimen/text_size_normal"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:singleLine="true"
+                        android:ellipsize="marquee"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:scrollHorizontally="true"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:freezesText="true" />
 
                 </LinearLayout>
 
