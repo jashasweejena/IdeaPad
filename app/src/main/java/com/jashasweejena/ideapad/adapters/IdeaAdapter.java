@@ -53,8 +53,8 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
 
         //If long pressed, launch the edit dialog
         ideaViewHolder.viewForeground.setOnLongClickListener(v -> {
-            fabFunction(position);
-            return false;
+            editIdea(idea);
+            return true;
         });
 
         //If single clicked, show the description
@@ -64,13 +64,10 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
             View showDesc = layoutInflater.inflate(R.layout.show_desc, null, false);
             TypeWriterView description = showDesc.findViewById(R.id.description);
             ImageView imageView = showDesc.findViewById(R.id.drawingImageView);
-            Idea idea1 = RealmController.getInstance().getAllBooks().get(position);
-            String descriptionString = idea1.getDesc();
-
-            description.setDelay(100);
+            String descriptionString = idea.getDesc();
             description.setText(descriptionString);
 
-            byte[] drawingBytes = idea1.getDrawing();
+            byte[] drawingBytes = idea.getDrawing();
 
             if (drawingBytes != null) {
                 Bitmap drawing = BitmapFactory.decodeByteArray(drawingBytes, 0, drawingBytes.length);
@@ -131,11 +128,7 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
         notifyDataSetChanged();
     }
 
-    private void fabFunction(final int position) {
-        RealmController realmController = RealmController.getInstance();
-        RealmResults<Idea> listOfIdeas = realmController.getAllBooks();
-
-        Idea idea = listOfIdeas.get(position);
+    private void editIdea(Idea idea) {
         DialogUtils.showIdeaDialog(context, R.string.title_edit_idea, realm,
                 idea.getName(), idea.getDesc(), (name, desc) -> onEditComplete(idea, name, desc),
                 false);
