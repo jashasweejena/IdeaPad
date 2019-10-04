@@ -1,20 +1,14 @@
 package com.jashasweejena.ideapad.activity;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -31,6 +25,7 @@ import com.jashasweejena.ideapad.app.Prefs;
 import com.jashasweejena.ideapad.app.RecyclerTouchItemHelper;
 import com.jashasweejena.ideapad.model.Idea;
 import com.jashasweejena.ideapad.realm.RealmController;
+import com.jashasweejena.ideapad.utils.DialogUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -151,69 +146,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
     }
 
     private void fabFunction(@Nullable final String desc) {
-        final View content = getLayoutInflater().inflate(R.layout.edit_idea, null, false);
-
-        final EditText editName = content.findViewById(R.id.editName);
-        final EditText editDesc = content.findViewById(R.id.editDesc);
-
-        if (desc != null) {
-            editDesc.setText(desc);
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle(R.string.title_new_idea)
-                .setView(content)
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    // Create a new Idea instance which will store information regarding the idea
-                    // in respective fields and go into the realm database
-
-                    String nameStr = editName.getText().toString();
-                    if (nameStr.isEmpty() || nameStr.matches("\\s+")) {
-                        Toast.makeText(MainActivity.this,
-                                "Name field cannot be left blank!", Toast.LENGTH_SHORT)
-                                .show();
-                        return;
-                    }
-
-                    if (desc == null) {
-                        String desc1 = editDesc.getText().toString();
-                        if (desc1.isEmpty() || desc1.matches("\\s+")) {
-                            Toast.makeText(MainActivity.this,
-                                    "Desc field cannot be left blank!", Toast.LENGTH_SHORT)
-                                    .show();
-                            return;
-                        }
-                        addIdeaToRealm(nameStr, desc1);
-                    } else {
-                        addIdeaToRealm(nameStr, desc);
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss())
-                .setNeutralButton(R.string.title_draw, (dialog, which) -> {
-                    Intent intent = new Intent(MainActivity.this, CanvasActivity.class);
-                    startActivity(intent);
-                });
-
-
-        AlertDialog dialog = builder.create();
-        // get the center for the clipping circle
-
-        final View view = dialog.getWindow().getDecorView();
-
-        view.post(() -> {
-            final int centerX = view.getWidth() / 2;
-            final int centerY = view.getHeight() / 2;
-            // TODO Get startRadius from FAB
-            // TODO Also translate animate FAB to center of screen?
-            float startRadius = 20;
-            float endRadius = view.getHeight();
-            Animator animator = ViewAnimationUtils
-                    .createCircularReveal(view, centerX, centerY, startRadius, endRadius);
-            animator.setDuration(500);
-            animator.start();
-        });
-
-        dialog.show();
+        DialogUtils.showIdeaDialog(this, R.string.title_new_idea, desc, null,
+                this::addIdeaToRealm, true);
     }
 
     private void handleIntent() {
