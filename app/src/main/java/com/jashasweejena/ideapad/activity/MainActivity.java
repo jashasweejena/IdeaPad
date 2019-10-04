@@ -161,28 +161,31 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Mann mei ladoo phoota?")
+        builder.setTitle(R.string.title_new_idea)
                 .setView(content)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     // Create a new Idea instance which will store information regarding the idea
                     // in respective fields and go into the realm database
 
-                        if (desc == null) {
-                            if (editName.getText() == null || editName.getText().toString().equals("") || editName.getText().toString().equals(" ")) {
-                                Toast.makeText(MainActivity.this, "Name field cannot be left blank!", Toast.LENGTH_SHORT).show();
-                            }
-                            String name = editName.getText().toString();
-                            String desc = editDesc.getText().toString();
+                    String nameStr = editName.getText().toString();
+                    if (nameStr.isEmpty() || nameStr.matches("\\s+")) {
+                        Toast.makeText(MainActivity.this,
+                                "Name field cannot be left blank!", Toast.LENGTH_SHORT)
+                                .show();
+                        return;
+                    }
 
-                            addIdeaToRealm(name, desc);
-                        } else {
-                            if (editName.getText() == null || editName.getText().toString().equals("") || editName.getText().toString().equals(" ")) {
-                                Toast.makeText(MainActivity.this, "Name field cannot be left blank!", Toast.LENGTH_SHORT).show();
-                            }
-
-                            String name = editName.getText().toString();
-                            addIdeaToRealm(name, desc);
+                    if (desc == null) {
+                        String desc1 = editDesc.getText().toString();
+                        if (desc1.isEmpty() || desc1.matches("\\s+")) {
+                            Toast.makeText(MainActivity.this,
+                                    "Desc field cannot be left blank!", Toast.LENGTH_SHORT)
+                                    .show();
+                            return;
                         }
+                        addIdeaToRealm(nameStr, desc1);
+                    } else {
+                        addIdeaToRealm(nameStr, desc);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss())
