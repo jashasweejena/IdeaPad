@@ -2,16 +2,13 @@ package com.jashasweejena.ideapad.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -20,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.jashasweejena.ideapad.R;
 import com.jashasweejena.ideapad.model.Idea;
 import com.jashasweejena.ideapad.realm.RealmController;
+import com.jashasweejena.ideapad.utils.DialogUtils;
 
 import in.codeshuffle.typewriterview.TypeWriterView;
 import io.realm.Realm;
@@ -55,24 +53,21 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
 
         //If long pressed, launch the edit dialog
         ideaViewHolder.viewForeground.setOnLongClickListener(v -> {
-            fabFunction(position);
-            return false;
+            editIdea(idea);
+            return true;
         });
 
         //If single clicked, show the description
         ideaViewHolder.viewForeground.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View showDesc = layoutInflater.inflate(R.layout.show_desc, null, false);
+            View showDesc = LayoutInflater.from(context)
+                    .inflate(R.layout.show_desc, null, false);
             TypeWriterView description = showDesc.findViewById(R.id.description);
             ImageView imageView = showDesc.findViewById(R.id.drawingImageView);
-            Idea idea1 = RealmController.getInstance().getAllBooks().get(position);
-            String descriptionString = idea1.getDesc();
+            String descriptionString = idea.getDesc();
 
-            description.setDelay(100);
             description.setText(descriptionString);
-
-            byte[] drawingBytes = idea1.getDrawing();
+            byte[] drawingBytes = idea.getDrawing();
 
             if (drawingBytes != null) {
                 Bitmap drawing = BitmapFactory.decodeByteArray(drawingBytes, 0, drawingBytes.length);
@@ -124,54 +119,18 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
         }
     }
 
-    private void fabFunction(final int position) {
-        RealmController realmController = RealmController.getInstance();
-        RealmResults<Idea> listOfIdeas = realmController.getAllBooks();
+    private void onEditComplete(Idea idea, String name, String desc) {
+        idea.setName(name);
+        idea.setDesc(desc);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        final View content = LayoutInflater.from(context)
-                .inflate(R.layout.edit_idea, null, false);
+        realm.copyToRealm(idea);
+        realm.commitTransaction();
+        notifyDataSetChanged();
+    }
 
-        final EditText editName = content.findViewById(R.id.editName);
-        final EditText editDesc = content.findViewById(R.id.editDesc);
-
-        editName.setText(listOfIdeas.get(position).getName());
-        editDesc.setText(listOfIdeas.get(position).getDesc());
-
-        builder.setView(content)
-                .setTitle("Edit the idea")
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    String name;
-                    String desc;
-                    RealmResults<Idea> listOfIdeas1 = realm.where(Idea.class).findAll();
-                    Idea idea = listOfIdeas1.get(position);
-
-                    realm.beginTransaction();
-
-                    name = editName.getText().toString();
-                    desc = editDesc.getText().toString();
-
-                    if (editName.getText() == null || editName.getText().toString().equals("")
-                            || editName.getText().toString().equals(" ")) {
-
-                        Toast.makeText(context.getApplicationContext(),
-                                "Name field cannot be left blank!", Toast.LENGTH_SHORT)
-                                .show();
-                        realm.commitTransaction();
-                    } else {
-                        idea.setName(name);
-                        idea.setDesc(desc);
-
-                        realm.copyToRealm(idea);
-                        realm.commitTransaction();
-                        notifyDataSetChanged();
-                    }
-
-                })
-                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss());
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
+    private void editIdea(Idea idea) {
+        DialogUtils.showIdeaDialog(context, R.string.title_edit_idea, realm,
+                idea.getName(), idea.getDesc(), (name, desc) -> onEditComplete(idea, name, desc),
+                false);
     }
 }
