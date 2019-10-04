@@ -3,6 +3,7 @@ package com.jashasweejena.ideapad.activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +19,7 @@ import java.io.ByteArrayOutputStream;
 import io.realm.Realm;
 
 public class CanvasActivity extends AppCompatActivity {
-    RelativeLayout parentView;
+    LinearLayout parentView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
