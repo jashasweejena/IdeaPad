@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -14,7 +13,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import androidx.core.app.NavUtils;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,38 +22,19 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
-//import com.firebase.ui.auth.AuthUI;
-//import com.firebase.ui.auth.IdpResponse;
-//import com.google.firebase.auth.FirebaseAuth;
-//import com.google.firebase.auth.FirebaseUser;
-import com.ajithvgiri.canvaslibrary.CanvasView;
 import com.jashasweejena.ideapad.R;
 import com.jashasweejena.ideapad.adapters.IdeaAdapter;
-import com.jashasweejena.ideapad.adapters.RealmIdeaAdapter;
+import com.jashasweejena.ideapad.adapters.RealmModelAdapter;
 import com.jashasweejena.ideapad.app.Prefs;
 import com.jashasweejena.ideapad.app.RecyclerTouchItemHelper;
 import com.jashasweejena.ideapad.model.Idea;
 import com.jashasweejena.ideapad.realm.RealmController;
-import com.mrgames13.jimdo.splashscreen.App.SplashScreenBuilder;
-import com.rm.freedrawview.FreeDrawView;
-import com.rm.freedrawview.PathDrawnListener;
-import com.rm.freedrawview.PathRedoUndoCountChangeListener;
-import com.rm.freedrawview.ResizeBehaviour;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -77,9 +56,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
     private Realm realm;
     private LayoutInflater layoutInflater;
     private RealmResults<Idea> listOfIdeas;
-    FreeDrawView mSignatureView;
-    private static int RC_SIGN_IN = 123;
-    byte[] bmp;
 
 
     @Override
@@ -91,18 +67,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
 
         coordinatorLayout = findViewById(R.id.coordinatorlayout);
         setSupportActionBar(toolbar);
-        realm = RealmController.with().getRealm();
+        realm = RealmController.getInstance().getRealm();
         setUpRecycler();
         listOfIdeas = RealmController.getInstance().getAllBooks();
         setRealmAdapter(listOfIdeas);
         handleIntent();
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fabFunction(null);
-            }
-        });
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,7 +85,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
     // to recyclerViewAdapter
     public void setRealmAdapter(RealmResults<Idea> listOfIdeas) {
 
-        RealmIdeaAdapter realmAdapter = new RealmIdeaAdapter(this, listOfIdeas, true);
+        RealmModelAdapter<Idea> realmAdapter =
+                new RealmModelAdapter<>(this, listOfIdeas, true);
         //Join the RecyclerView Adapter and the realmAdapter
         recyclerViewAdapter.setRealmBaseAdapter(realmAdapter);
 
@@ -173,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
             //to new object and pass the new object to restoreItem.
             final String deletedName = deletedIdea.getName();
             final String deletedDesc = deletedIdea.getDesc();
-            final Long deletedId = deletedIdea.getId();
+            final long deletedId = deletedIdea.getId();
 
             Log.d(TAG, "onSwiped: " + "Adapter position before deletion " + deletedPosition);
             Log.d(TAG, "onSwiped: " + "Name of Item before deletion " + deletedName);
@@ -215,7 +185,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
 
         final EditText editName = content.findViewById(R.id.editName);
         final EditText editDesc = content.findViewById(R.id.editDesc);
-        final ImageView image = content.findViewById(R.id.drawingImageView);
 
         if (desc != null) {
             editDesc.setText(desc);
@@ -267,8 +236,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
                         Intent intent = new Intent(MainActivity.this, CanvasActivity.class);
                         startActivity(intent);
                     }
-                })
-        ;
+                });
 
 
         AlertDialog dialog = builder.create();
@@ -292,30 +260,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
         });
 
         dialog.show();
-    }
-
-    public void setByteArray(byte[] bmp) {
-        if (bmp != null) {
-            Log.d(TAG, "setByteArray: " + "not null bmp");
-        }
-        this.bmp = bmp;
-    }
-
-    public void callNotifyDatasetChanged() {
-        recyclerViewAdapter.callNotifyDatasetChanged();
-    }
-
-    public void handleDrawing() {
-
-        Realm r = RealmController.getInstance().getRealm();
-
-        r.beginTransaction();
-        Idea idea = new Idea();
-        idea.setId(System.currentTimeMillis() + RealmController.getInstance().getAllBooks().size() + 1);
-        idea.setName(" ");
-
-        r.copyToRealm(idea);
-        r.commitTransaction();
     }
 
     private void handleIntent() {

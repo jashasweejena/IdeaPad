@@ -5,11 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.media.Image;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,11 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hanks.htextview.base.HTextView;
 import com.jashasweejena.ideapad.R;
 import com.jashasweejena.ideapad.model.Idea;
 import com.jashasweejena.ideapad.realm.RealmController;
@@ -34,15 +29,8 @@ import io.realm.RealmResults;
 public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
 
 
-    final Context context;
-    private final String TAG = IdeaAdapter.class.getSimpleName();
-    public AlertDialog descriptionDialog = null;
+    private final Context context;
     private Realm realm;
-    private LayoutInflater inflater;
-
-    public static final String TYPE_TEXT = "text";
-
-    public static final String TYPE_DRAW = "draw";
 
     public IdeaAdapter(Context context) {
         this.context = context;
@@ -54,7 +42,8 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
 
         realm = RealmController.getInstance().getRealm();
 
-        return new IdeaViewHolder(inflater.from(context).inflate(R.layout.single_item, parent, false));
+        return new IdeaViewHolder(LayoutInflater.from(context)
+                .inflate(R.layout.single_item, parent, false));
 
     }
 
@@ -67,7 +56,6 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
         //cast the generic ViewHolder to a specific one
         final IdeaViewHolder ideaViewHolder = (IdeaViewHolder) holder;
 
-//        ideaViewHolder.tag.setText(idea.getTag());
         ideaViewHolder.name.setText(idea.getName());
 
         //If long pressed, launch the edit dialog
@@ -96,7 +84,7 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
 
                 description.setDelay(100);
 
-                Idea idea = RealmController.with().getAllBooks().get(position);
+                Idea idea = RealmController.getInstance().getAllBooks().get(position);
 
                 String descriptionString = idea.getDesc();
                 description.setText(descriptionString);
@@ -118,7 +106,6 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
                         .setTitle("Description");
 
                 AlertDialog alertDialog = builder.create();
-                descriptionDialog = alertDialog;
                 alertDialog.show();
             }
         });
@@ -163,7 +150,7 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
         private TextView name;
 
 
-        public IdeaViewHolder(View itemView) {
+        IdeaViewHolder(View itemView) {
             super(itemView);
 
             viewForeground = itemView.findViewById(R.id.card_idea);
@@ -173,12 +160,12 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
     }
 
     private void fabFunction(final int position) {
-        RealmController realmController = RealmController.with();
+        RealmController realmController = RealmController.getInstance();
         RealmResults<Idea> listOfIdeas = realmController.getAllBooks();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View content = layoutInflater.inflate(R.layout.edit_idea, null, false);
+        final View content = LayoutInflater.from(context)
+                .inflate(R.layout.edit_idea, null, false);
 
         final EditText editName = content.findViewById(R.id.editName);
         final EditText editDesc = content.findViewById(R.id.editDesc);
@@ -225,30 +212,12 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                         dialog.dismiss();
-
                     }
                 });
-
 
         AlertDialog dialog = builder.create();
         dialog.show();
 
-    }
-
-    public void callNotifyDatasetChanged() {
-
-        Realm r = RealmController.getInstance().getRealm();
-
-        r.beginTransaction();
-
-        Idea idea = new Idea();
-        idea.setId(System.currentTimeMillis() + RealmController.getInstance().getAllBooks().size() + 1);
-
-        r.copyToRealm(idea);
-        r.commitTransaction();
-
-        notifyDataSetChanged();
     }
 }

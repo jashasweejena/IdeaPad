@@ -11,7 +11,7 @@ public class Prefs {
     private final SharedPreferences sharedPreferences;
 
 
-    public Prefs(Context context) {
+    private Prefs(Context context) {
 
         sharedPreferences = context.getApplicationContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
@@ -27,7 +27,7 @@ public class Prefs {
 
     }
 
-    public void setPreLoad(Boolean totalTime) {
+    public void setPreLoad(boolean totalTime) {
 
         sharedPreferences
                 .edit()

@@ -11,13 +11,12 @@ public class RealmController  {
     private final Realm realm;
 
 
-    public RealmController() {
-
+    private RealmController() {
+        // When a new instance of RealmController is created, a new instance of Realm is created too
         realm = Realm.getDefaultInstance();
-    } //The class is designed in such a way that when a new instance of RealmController is created,
-    // a new instance of Realm is created as well
+    }
 
-    public static RealmController with() {
+    public static RealmController getInstance() {
 
         if(instance == null)
         {
@@ -27,17 +26,11 @@ public class RealmController  {
         return instance;
     }
 
-    public static RealmController getInstance() {
-
-        return instance;
-    } //We can call this if we are sure that instance != null. Else, we should call with() method
-
     public Realm getRealm() {
 
         return realm;
     }
 
-    //Refresh the realm instance
     public void refresh() {
 
         realm.refresh();
@@ -63,14 +56,5 @@ public class RealmController  {
 
         return !realm.allObjects(Idea.class).isEmpty();
 
-    }
-
-    public RealmResults<Idea> sampleQuery() {
-
-        return realm.where(Idea.class)
-                .contains("tag", "app")
-                .or()
-                .contains("name", "IdeaPad")
-                .findAll();
     }
 }
