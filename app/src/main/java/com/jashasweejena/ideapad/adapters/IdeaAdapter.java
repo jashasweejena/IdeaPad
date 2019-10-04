@@ -54,46 +54,38 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
         ideaViewHolder.name.setText(idea.getName());
 
         //If long pressed, launch the edit dialog
-        ideaViewHolder.viewForeground.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-
-                fabFunction(position);
-                return false;
-
-            }
+        ideaViewHolder.viewForeground.setOnLongClickListener(v -> {
+            fabFunction(position);
+            return false;
         });
 
         //If single clicked, show the description
-        ideaViewHolder.viewForeground.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View showDesc = layoutInflater.inflate(R.layout.show_desc, null, false);
-                TypeWriterView description = showDesc.findViewById(R.id.description);
-                ImageView imageView = showDesc.findViewById(R.id.drawingImageView);
-                Idea idea = RealmController.getInstance().getAllBooks().get(position);
-                String descriptionString = idea.getDesc();
+        ideaViewHolder.viewForeground.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View showDesc = layoutInflater.inflate(R.layout.show_desc, null, false);
+            TypeWriterView description = showDesc.findViewById(R.id.description);
+            ImageView imageView = showDesc.findViewById(R.id.drawingImageView);
+            Idea idea1 = RealmController.getInstance().getAllBooks().get(position);
+            String descriptionString = idea1.getDesc();
 
-                description.setDelay(100);
-                description.setText(descriptionString);
+            description.setDelay(100);
+            description.setText(descriptionString);
 
-                byte[] drawingBytes = idea.getDrawing();
+            byte[] drawingBytes = idea1.getDrawing();
 
-                if (drawingBytes != null) {
-                    Bitmap drawing = BitmapFactory.decodeByteArray(drawingBytes, 0, drawingBytes.length);
-                    if (drawing != null) {
-                        imageView.setImageBitmap(drawing);
-                    }
+            if (drawingBytes != null) {
+                Bitmap drawing = BitmapFactory.decodeByteArray(drawingBytes, 0, drawingBytes.length);
+                if (drawing != null) {
+                    imageView.setImageBitmap(drawing);
                 }
-
-                builder.setView(showDesc)
-                        .setTitle("Description");
-
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
             }
+
+            builder.setView(showDesc)
+                    .setTitle("Description");
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         });
 
     }
@@ -148,43 +140,35 @@ public class IdeaAdapter extends RealmRecyclerViewAdapter<Idea> {
 
         builder.setView(content)
                 .setTitle("Edit the idea")
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String name;
-                        String desc;
-                        RealmResults<Idea> listOfIdeas = realm.where(Idea.class).findAll();
-                        Idea idea = listOfIdeas.get(position);
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    String name;
+                    String desc;
+                    RealmResults<Idea> listOfIdeas1 = realm.where(Idea.class).findAll();
+                    Idea idea = listOfIdeas1.get(position);
 
-                        realm.beginTransaction();
+                    realm.beginTransaction();
 
-                        name = editName.getText().toString();
-                        desc = editDesc.getText().toString();
+                    name = editName.getText().toString();
+                    desc = editDesc.getText().toString();
 
-                        if (editName.getText() == null || editName.getText().toString().equals("")
-                                || editName.getText().toString().equals(" ")) {
+                    if (editName.getText() == null || editName.getText().toString().equals("")
+                            || editName.getText().toString().equals(" ")) {
 
-                            Toast.makeText(context.getApplicationContext(),
-                                    "Name field cannot be left blank!", Toast.LENGTH_SHORT)
-                                    .show();
-                            realm.commitTransaction();
-                        } else {
-                            idea.setName(name);
-                            idea.setDesc(desc);
+                        Toast.makeText(context.getApplicationContext(),
+                                "Name field cannot be left blank!", Toast.LENGTH_SHORT)
+                                .show();
+                        realm.commitTransaction();
+                    } else {
+                        idea.setName(name);
+                        idea.setDesc(desc);
 
-                            realm.copyToRealm(idea);
-                            realm.commitTransaction();
-                            notifyDataSetChanged();
-                        }
-
+                        realm.copyToRealm(idea);
+                        realm.commitTransaction();
+                        notifyDataSetChanged();
                     }
+
                 })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss());
 
         AlertDialog dialog = builder.create();
         dialog.show();

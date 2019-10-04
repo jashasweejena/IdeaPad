@@ -2,7 +2,6 @@ package com.jashasweejena.ideapad.activity;
 
 import android.animation.Animator;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -68,12 +67,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
         listOfIdeas = RealmController.getInstance().getAllBooks();
         setRealmAdapter(listOfIdeas);
         handleIntent();
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fabFunction(null);
-            }
-        });
+        fab.setOnClickListener(v -> fabFunction(null));
     }
 
     private void setRealmAdapter(RealmResults<Idea> listOfIdeas) {
@@ -141,18 +135,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
             //As item is removed, show SnackBar
 
             Snackbar snackbar = Snackbar.make(coordinatorLayout, deletedName + " Removed from cart", Snackbar.LENGTH_SHORT);
-            snackbar.setAction("UNDO", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Create new Idea object with fields of old object and use it instead.
-                    Idea newIdea = new Idea();
-                    newIdea.setId(deletedId);
-                    newIdea.setName(deletedName);
-                    newIdea.setDesc(deletedDesc);
+            snackbar.setAction("UNDO", v -> {
+                //Create new Idea object with fields of old object and use it instead.
+                Idea newIdea = new Idea();
+                newIdea.setId(deletedId);
+                newIdea.setName(deletedName);
+                newIdea.setDesc(deletedDesc);
 
-                    //Restore the deleted item.
-                    recyclerViewAdapter.restoreItem(newIdea);
-                }
+                //Restore the deleted item.
+                recyclerViewAdapter.restoreItem(newIdea);
             });
             snackbar.setActionTextColor(Color.YELLOW);
             snackbar.show();
@@ -172,12 +163,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Mann mei ladoo phoota?")
                 .setView(content)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //Create a new Idea instance which will store information
-                        //regarding the idea in respective fields and go into
-                        //the realm database
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    // Create a new Idea instance which will store information regarding the idea
+                    // in respective fields and go into the realm database
 
                         if (desc == null) {
                             if (editName.getText() == null || editName.getText().toString().equals("") || editName.getText().toString().equals(" ")) {
@@ -197,18 +185,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
                         }
                     }
                 })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .setNeutralButton(R.string.title_draw, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(MainActivity.this, CanvasActivity.class);
-                        startActivity(intent);
-                    }
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss())
+                .setNeutralButton(R.string.title_draw, (dialog, which) -> {
+                    Intent intent = new Intent(MainActivity.this, CanvasActivity.class);
+                    startActivity(intent);
                 });
 
 
@@ -217,19 +197,17 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
 
         final View view = dialog.getWindow().getDecorView();
 
-        view.post(new Runnable() {
-            @Override
-            public void run() {
-                final int centerX = view.getWidth() / 2;
-                final int centerY = view.getHeight() / 2;
-                // TODO Get startRadius from FAB
-                // TODO Also translate animate FAB to center of screen?
-                float startRadius = 20;
-                float endRadius = view.getHeight();
-                Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
-                animator.setDuration(500);
-                animator.start();
-            }
+        view.post(() -> {
+            final int centerX = view.getWidth() / 2;
+            final int centerY = view.getHeight() / 2;
+            // TODO Get startRadius from FAB
+            // TODO Also translate animate FAB to center of screen?
+            float startRadius = 20;
+            float endRadius = view.getHeight();
+            Animator animator = ViewAnimationUtils
+                    .createCircularReveal(view, centerX, centerY, startRadius, endRadius);
+            animator.setDuration(500);
+            animator.start();
         });
 
         dialog.show();
@@ -240,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerTouchItem
         String action = intent.getAction();
         String type = intent.getType();
 
-        if (Intent.ACTION_SEND.equals(action) && type.equals("text/plain")) {
+        if (Intent.ACTION_SEND.equals(action) && "text/plain".equals(type)) {
             String sentText = intent.getStringExtra(Intent.EXTRA_TEXT);
 
             if (sentText != null) {

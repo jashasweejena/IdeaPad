@@ -35,12 +35,7 @@ public class CanvasActivity extends AppCompatActivity {
         parentView.setDrawingCacheEnabled(true);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveCanvas();
-            }
-        });
+        fab.setOnClickListener(v -> saveCanvas());
     }
 
     private void saveCanvas() {
